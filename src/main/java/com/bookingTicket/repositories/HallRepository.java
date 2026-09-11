@@ -1,0 +1,12 @@
+package com.bookingTicket.repositories;
+
+import com.bookingTicket.entities.Hall;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface HallRepository
+        extends JpaRepository<Hall, Long> {
+
+    List<Hall> findByCinemaId(Long cinemaId);
+}
