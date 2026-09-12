@@ -1,10 +1,11 @@
-### 1. Create User
+### 1. Create Opted-in User (For Movie release & booking alerts)
 POST http://localhost:8081/users
 Content-Type: application/json
 
 {
+  "optedInForNotifications": true,
   "name": "Nitu",
-  "email": "nituspj032001@gmail.com"
+  "email": "[EMAIL_ADDRESS]"
 }
 
 ### 2. Create Cinema
@@ -13,7 +14,7 @@ Content-Type: application/json
 
 {
   "name": "PVR Cinemas",
-  "city": "Bengaluru",
+  "city":  "Bengaluru",
   "address": "Forum Mall, Koramangala"
 }
 
@@ -27,16 +28,16 @@ Content-Type: application/json
   "cinemaId": 1
 }
 
-### 4. Create Movie
+### 4. Create Movie (Triggers New Movie Release Notification to opted-in users! - R14)
 POST http://localhost:8081/movies
 Content-Type: application/json
 
 {
-  "title": "Inception",
+  "title": "Interstellar",
   "language": "English",
   "genre": "Sci-Fi",
-  "releaseDate": "2026-10-15",
-  "duration": 148
+  "releaseDate": "2026-11-10",
+  "duration": 169
 }
 
 ### 5. Add Seat 1 to Hall 1
@@ -61,26 +62,74 @@ Content-Type: application/json
   "price": 250.0
 }
 
-### 7. Create Show
+### 7. Add Seat 3 to Hall 1 (For modification test)
+POST http://localhost:8081/seats
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "seatNumber": "A3",
+  "seatType": "PLATINUM",
+  "price": 400.0
+}
+
+### 8. Create Show
 POST http://localhost:8081/shows
 Content-Type: application/json
 
 {
   "movieId": 1,
   "hallId": 1,
-  "startTime": "2026-10-21T18:00:00",
-  "endTime": "2026-10-21T21:00:00"
+  "startTime": "2026-11-10T18:00:00",
+  "endTime": "2026-11-10T21:00:00"
 }
 
-### 8. View Show Seats (Verify availability)
+### 9. View Available Show Seats
 GET http://localhost:8081/show-seats/show/1
 
-### 9. Book the Tickets!
+### 10. Book Online with Credit Card (SUCCESS - R6, R7, R14)
 POST http://localhost:8081/bookings
 Content-Type: application/json
 
 {
   "userId": 1,
   "showId": 1,
-  "seatIds": [1, 2]
+  "seatIds": [1, 2],
+  "bookingSource": "ONLINE",
+  "paymentMethod": "CREDIT_CARD"
 }
+
+### 11. Book via Ticket Agent with Cash (SUCCESS - R6, R7)
+POST http://localhost:8081/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "showId": 1,
+  "seatIds": [3],
+  "bookingSource": "AGENT",
+  "paymentMethod": "CASH"
+}
+
+### 12. Try Online Booking with CASH (EXPECTED FAILURE: 500 - R7 validation)
+POST http://localhost:8081/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "showId": 1,
+  "seatIds": [3],
+  "bookingSource": "ONLINE",
+  "paymentMethod": "CASH"
+}
+
+### 13. Modify Booking 1 (Replaces seats with seat 3 - R15)
+PUT http://localhost:8081/bookings/1
+Content-Type: application/json
+
+{
+  "newSeatIds": [1]
+}
+
+### 14. Cancel Booking 1 (Releases seats back to AVAILABLE - R14)
+DELETE http://localhost:8081/bookings/1
