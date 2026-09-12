@@ -3,6 +3,7 @@ package com.bookingTicket.service;
 import com.bookingTicket.entities.Show;
 import com.bookingTicket.repositories.ShowRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -10,11 +11,14 @@ import java.util.List;
 public class ShowService {
 
     private final ShowRepository showRepository;
+    private final ShowSeatService showSeatService;
 
-    public ShowService(ShowRepository showRepository) {
+    public ShowService(ShowRepository showRepository, ShowSeatService showSeatService) {
         this.showRepository = showRepository;
+        this.showSeatService = showSeatService;
     }
 
+    @Transactional
     public Show createShow(Show show) {
 
         boolean overlap =
@@ -30,7 +34,12 @@ public class ShowService {
             );
         }
 
-        return showRepository.save(show);
+        Show savedShow = showRepository.save(show);
+
+        // Auto-generate show seats for this show
+        showSeatService.createShowSeats(savedShow);
+
+        return savedShow;
     }
 
     public List<Show> getShowsByMovie(Long movieId) {
