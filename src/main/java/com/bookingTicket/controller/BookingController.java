@@ -1,11 +1,10 @@
 package com.bookingTicket.controller;
 
+import com.bookingTicket.dto.BookingRequest;
 import com.bookingTicket.entities.Booking;
 import com.bookingTicket.service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
@@ -21,15 +20,13 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Booking> createBooking(
-            @RequestParam Long userId,
-            @RequestParam Long showId,
-            @RequestBody List<Long> seatIds) {
+            @RequestBody BookingRequest request) {
 
         Booking booking =
                 bookingService.createBooking(
-                        userId,
-                        showId,
-                        seatIds
+                        request.getUserId(),
+                        request.getShowId(),
+                        request.getSeatIds()
                 );
 
         return ResponseEntity.ok(booking);
@@ -60,6 +57,5 @@ public class BookingController {
 //       ↓
 //Create Booking
 //       ↓
-//Create BookingSeat
 //       ↓
 //COMMIT
