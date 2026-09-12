@@ -2,7 +2,9 @@ package com.bookingTicket.service;
 
 
 import com.bookingTicket.entities.Movie;
+import com.bookingTicket.events.MovieReleasedEvent;
 import com.bookingTicket.repositories.MovieRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,13 +14,26 @@ import java.util.List;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public MovieService(MovieRepository movieRepository) {
+    public MovieService(MovieRepository movieRepository, ApplicationEventPublisher eventPublisher) {
         this.movieRepository = movieRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Movie addMovie(Movie movie) {
-        return movieRepository.save(movie);
+        Movie savedMovie = movieRepository.save(movie);
+
+        // Publish event to notify opted-in users (R14)
+        eventPublisher.publishEvent(new MovieReleasedEvent(
+                savedMovie.getId(),
+                savedMovie.getTitle(),
+                savedMovie.getLanguage(),
+                savedMovie.getGenre(),
+                savedMovie.getReleaseDate()
+        ));
+
+        return savedMovie;
     }
 
     public List<Movie> getAllMovies() {
