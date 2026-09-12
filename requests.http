@@ -1,0 +1,86 @@
+### 1. Create User
+POST http://localhost:8081/users
+Content-Type: application/json
+
+{
+  "name": "Nitu",
+  "email": "nituspj032001@gmail.com"
+}
+
+### 2. Create Cinema
+POST http://localhost:8081/cinemas
+Content-Type: application/json
+
+{
+  "name": "PVR Cinemas",
+  "city": "Bengaluru",
+  "address": "Forum Mall, Koramangala"
+}
+
+### 3. Create Hall
+POST http://localhost:8081/halls
+Content-Type: application/json
+
+{
+  "name": "Audi 1",
+  "capacity": 100,
+  "cinemaId": 1
+}
+
+### 4. Create Movie
+POST http://localhost:8081/movies
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "language": "English",
+  "genre": "Sci-Fi",
+  "releaseDate": "2026-10-15",
+  "duration": 148
+}
+
+### 5. Add Seat 1 to Hall 1
+POST http://localhost:8081/seats
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "seatNumber": "A1",
+  "seatType": "GOLD",
+  "price": 250.0
+}
+
+### 6. Add Seat 2 to Hall 1
+POST http://localhost:8081/seats
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "seatNumber": "A2",
+  "seatType": "GOLD",
+  "price": 250.0
+}
+
+### 7. Create Show
+POST http://localhost:8081/shows
+Content-Type: application/json
+
+{
+  "movieId": 1,
+  "hallId": 1,
+  "startTime": "2026-10-21T18:00:00",
+  "endTime": "2026-10-21T21:00:00"
+}
+
+### 8. View Show Seats (Verify availability)
+GET http://localhost:8081/show-seats/show/1
+
+### 9. Book the Tickets!
+POST http://localhost:8081/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "showId": 1,
+  "seatIds": [1, 2]
+}
